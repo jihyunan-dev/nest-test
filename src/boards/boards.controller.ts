@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from "@nestjs/common";
 import { Board, BoardStatus } from "./board.model";
 import { BoardsService } from "./boards.service";
 import { CreateBoardDto } from "./dto/create-board.dto";
@@ -31,5 +31,10 @@ export class BoardsController {
   @Put("/:id/status")
   updateBoardStatus(@Param("id") boardId: string, @Body("status") status: BoardStatus): void {
     return this.boardService.updateBoardStatus(boardId, status);
+  }
+
+  @Get("/test/:id")
+  findOne(@Param("id", ParseIntPipe) id: number) {
+    return "good!";
   }
 }
