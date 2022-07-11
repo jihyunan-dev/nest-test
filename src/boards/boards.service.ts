@@ -23,4 +23,18 @@ export class BoardsService {
     // db저장
     return board;
   }
+
+  getBoardById(boardId: string): Board {
+    const target = this.boards.find((board) => board.id === boardId);
+    return target;
+  }
+
+  deleteBoardById(boardId: string): void {
+    this.boards.filter((board) => board.id !== boardId);
+  }
+
+  updateBoardStatus(boardId: string, status: BoardStatus): void {
+    const index = this.boards.findIndex((board) => board.id === boardId);
+    this.boards[index].status = status;
+  }
 }
