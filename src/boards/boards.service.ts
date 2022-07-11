@@ -1,5 +1,5 @@
 import { v1 as uuid } from "uuid"; // uuid 중 v1을 사용
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { Board, BoardStatus } from "./board.model";
 import { CreateBoardDto } from "./dto/create-board.dto";
 
@@ -26,11 +26,18 @@ export class BoardsService {
 
   getBoardById(boardId: string): Board {
     const target = this.boards.find((board) => board.id === boardId);
+    if (!target) {
+      throw new NotFoundException("해당 보드를 찾을 수 없습니다.");
+    }
     return target;
   }
 
   deleteBoardById(boardId: string): void {
-    this.boards.filter((board) => board.id !== boardId);
+    const target = this.boards.find((board) => board.id === boardId);
+    if (!target) {
+      throw new NotFoundException("해당 보드를 찾을 수 없습니다.");
+    }
+    this.boards.filter((board) => board.id !== target.id);
   }
 
   updateBoardStatus(boardId: string, status: BoardStatus): void {
