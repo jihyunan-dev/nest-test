@@ -1,48 +1,50 @@
-import { v1 as uuid } from "uuid"; // uuid 중 v1을 사용
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { Board, BoardStatus } from "./board.model";
 import { CreateBoardDto } from "./dto/create-board.dto";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Board } from "./board.entity";
+import { Repository } from "typeorm";
+import { BoardStatus } from "./board.model";
 
 @Injectable()
 export class BoardsService {
-  private boards: Board[] = [{ id: "1", title: "abcd", description: "", status: BoardStatus.PRIVATE }];
+  constructor(
+    @InjectRepository(Board)
+    private readonly boardsRepository: Repository<Board>,
+  ) {}
 
-  getAllBoards(): Board[] {
-    return this.boards;
+  async getBoardById(id: number): Promise<Board> {
+    const found = await this.boardsRepository.findOneBy({ id });
+
+    if (!found) {
+      throw new NotFoundException(`Can't find Board with id ${id}`);
+    }
+    return found;
   }
 
-  createBoard(createBoardDto: CreateBoardDto): Board {
+  async getAllBoards(): Promise<Board[]> {
+    return this.boardsRepository.find();
+  }
+
+  async createBoard(createBoardDto: CreateBoardDto): Promise<Board> {
     const { title, description } = createBoardDto;
-    const board: Board = {
-      id: uuid(), // db를 사용하지 않아 id를 얻기 위해 uuid 사용
+    const board = this.boardsRepository.create({
       title,
       description,
       status: BoardStatus.PUBLIC,
-    };
-    this.boards.push(board);
-    // db저장
+    });
+
+    await this.boardsRepository.save(board);
     return board;
   }
 
-  getBoardById(boardId: string): Board {
-    const target = this.boards.find((board) => board.id === boardId);
-    if (!target) {
-      throw new NotFoundException("해당 보드를 찾을 수 없습니다.");
-    }
-    return target;
+  async deleteBoardById(id: number): Promise<void> {
+    await this.boardsRepository.delete({ id });
   }
 
-  deleteBoardById(boardId: string): void {
-    const target = this.boards.find((board) => board.id === boardId);
-    if (!target) {
-      throw new NotFoundException("해당 보드를 찾을 수 없습니다.");
-    }
-    this.boards.filter((board) => board.id !== target.id);
-  }
-
-  updateBoardStatus(boardId: string, status: BoardStatus): Board {
-    const index = this.boards.findIndex((board) => board.id === boardId);
-    this.boards[index].status = status;
-    return this.boards[index];
+  async updateBoardStatus(id: number, status: BoardStatus): Promise<Board> {
+    const board = await this.getBoardById(id);
+    board.status = status;
+    await this.boardsRepository.save(board);
+    return board;
   }
 }

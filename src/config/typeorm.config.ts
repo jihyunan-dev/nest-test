@@ -7,7 +7,7 @@ export const typeORMConfig: TypeOrmModuleOptions = {
   port: 5432,
   username: "postgres",
   password: "postgres",
-  database: "boardproject",
+  database: "board-app",
   // Entities to be loaded for this connection
   entities: [__dirname + "/../**/*.entity.{js,ts}"],
   // synchronize : production에서는 false로 해야한다
