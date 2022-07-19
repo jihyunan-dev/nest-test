@@ -1,4 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes, ValidationPipe } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
 import { Board } from "./board.entity";
 import { BoardStatus } from "./board.model";
 import { BoardsService } from "./boards.service";
@@ -6,6 +7,7 @@ import { CreateBoardDto } from "./dto/create-board.dto";
 import { BoardStatusValidationPipe } from "./pipes/board-status-validation.pipe";
 
 @Controller("boards")
+@UseGuards(AuthGuard()) // controller 레벨에서 guard
 export class BoardsController {
   // dependency injection
   constructor(private boardService: BoardsService) {}
