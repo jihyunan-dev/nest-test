@@ -3,7 +3,6 @@ import { User } from "./user.entity";
 
 // parameter를 가져와서 decorator를 만듬
 export const GetUser = createParamDecorator((data, ctx: ExecutionContext): User => {
-  console.log(ctx.switchToHttp());
   const req = ctx.switchToHttp().getRequest();
   return req.user;
 });

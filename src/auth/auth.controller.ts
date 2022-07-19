@@ -23,7 +23,6 @@ export class AuthController {
   @Post("/authTest")
   @UseGuards(AuthGuard())
   authTest(@GetUser() user: User) {
-    console.log("여기부터");
-    console.log(user);
+    //
   }
 }

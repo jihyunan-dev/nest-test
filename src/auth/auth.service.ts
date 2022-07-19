@@ -22,7 +22,6 @@ export class AuthService {
   async createUser(authCredentialDto: AuthCredentialDto): Promise<void> {
     const { username, password } = authCredentialDto;
     const salt = await bcrypt.genSalt();
-    console.log(salt);
 
     const hashedPassword = await bcrypt.hash(password, salt);
     const user = this.userRepository.create({ username, password: hashedPassword });
